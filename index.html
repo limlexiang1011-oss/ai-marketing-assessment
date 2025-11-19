@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI 行销成熟度评估表</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: #818cf8;
+      --secondary: #8b5cf6;
+      --accent: #ec4899;
+      --success: #10b981;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-sub: #64748b;
+      --border-color: #e2e8f0;
+      --selected-bg: #eef2ff;
+      --selected-border: #6366f1;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --radius: 20px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header-card {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    h1 {
+      font-size: 42px;
+      font-weight: 800;
+      margin: 0 0 16px;
+      background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
+      text-shadow: 0 2px 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.95);
+      max-width: 650px;
+      margin: 0 auto;
+      font-weight: 400;
+      text-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Card Styles */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow-xl);
+      margin-bottom: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+      animation: fadeInUp 0.6s ease-out backwards;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.2s; }
+    .card:nth-child(3) { animation-delay: 0.3s; }
+    .card:nth-child(4) { animation-delay: 0.4s; }
+    .card:nth-child(5) { animation-delay: 0.5s; }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.25);
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 32px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid transparent;
+      border-image: linear-gradient(90deg, var(--primary), var(--secondary)) 1;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-title::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 28px;
+      background: linear-gradient(180deg, var(--primary), var(--secondary));
+      border-radius: 4px;
+    }
+
+    /* Questions */
+    .question {
+      margin-bottom: 40px;
+      animation: fadeIn 0.5s ease-out backwards;
+    }
+
+    .question:nth-child(2) { animation-delay: 0.1s; }
+    .question:nth-child(3) { animation-delay: 0.2s; }
+    .question:nth-child(4) { animation-delay: 0.3s; }
+    
+    .question:last-child {
+      margin-bottom: 0;
+    }
+
+    .question-title {
+      font-weight: 600;
+      font-size: 17px;
+      margin-bottom: 20px;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    /* Custom Radio Options */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      padding: 18px 22px;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--border-color);
+      background-color: #fff;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 15px;
+      color: var(--text-main);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-label::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.05), transparent);
+      transition: left 0.5s;
+    }
+
+    .option-label:hover::before {
+      left: 100%;
+    }
+
+    .option-label:hover {
+      border-color: var(--primary-light);
+      background-color: #f8fafc;
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+    }
+
+    /* Hide default radio */
+    .option-label input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* Selected State */
+    .option-label:has(input:checked) {
+      border-color: var(--selected-border);
+      background: linear-gradient(135deg, var(--selected-bg) 0%, #f0f4ff 100%);
+      color: var(--primary);
+      font-weight: 600;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), 0 8px 16px rgba(99, 102, 241, 0.2);
+      transform: translateX(0);
+    }
+
+    .option-label:has(input:checked)::before {
+      display: none;
+    }
+
+    /* Custom check circle */
+    .check-circle {
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid #cbd5e1;
+      border-radius: 50%;
+      margin-right: 14px;
+      flex-shrink: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      background: white;
+    }
+
+    .option-label:has(input:checked) .check-circle {
+      border-color: var(--primary);
+      background: var(--primary);
+      transform: scale(1.1);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+    }
+
+    .option-label:has(input:checked) .check-circle::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1);
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      animation: checkPop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Buttons */
+    .actions {
+      text-align: center;
+      margin-top: 48px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 50px;
+      padding: 18px 56px;
+      font-size: 17px;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.5);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-primary:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 40px -5px rgba(99, 102, 241, 0.6);
+    }
+
+    .btn-primary:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+
+    .btn-primary span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Result Section */
+    .result-card {
+      border-top: none;
+      background: #fff;
+      overflow: hidden;
+      padding: 0;
+      animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .result-header-bg {
+      background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+      padding: 50px 32px;
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-header-bg::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    .score-display {
+      font-size: 15px;
+      opacity: 0.95;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .level-tag {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 1;
+    }
+
+    .result-body {
+      padding: 40px;
+    }
+
+    .diagnosis-text {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      padding: 24px;
+      border-radius: var(--radius-sm);
+      border-left: 5px solid var(--primary);
+      color: var(--text-main);
+      margin-bottom: 36px;
+      font-size: 16px;
+      line-height: 1.8;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Dimensions Grid */
+    .dimension-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .dimension-item {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dimension-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+
+    .dimension-item:hover::before {
+      transform: scaleX(1);
+    }
+
+    .dimension-item:hover {
+      transform: translateY(-6px);
+      border-color: var(--primary-light);
+      box-shadow: 0 12px 24px rgba(99, 102, 241, 0.15);
+    }
+
+    .dimension-label {
+      font-size: 13px;
+      color: var(--text-sub);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .dimension-score {
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Advice List */
+    .advice-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.3px;
+    }
+
+    .advice-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .advice-list li {
+      position: relative;
+      padding: 16px 0 16px 32px;
+      margin-bottom: 12px;
+      color: var(--text-sub);
+      font-size: 15px;
+      line-height: 1.7;
+      border-bottom: 1px solid #f1f5f9;
+      transition: all 0.3s;
+    }
+
+    .advice-list li:last-child {
+      border-bottom: none;
+    }
+
+    .advice-list li:hover {
+      color: var(--text-main);
+      padding-left: 40px;
+    }
+
+    .advice-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      top: 16px;
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+    }
+
+    .alert {
+      color: #ef4444;
+      font-weight: 500;
+      margin-top: 20px;
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+      padding: 14px 24px;
+      border-radius: var(--radius-sm);
+      display: inline-block;
+      border: 2px solid #fecaca;
+      animation: shake 0.5s;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInDown {
+      from { 
+        opacity: 0; 
+        transform: translateY(-30px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    @keyframes fadeInUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(30px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    @keyframes scaleIn {
+      from { 
+        opacity: 0; 
+        transform: scale(0.95); 
+      }
+      to { 
+        opacity: 1; 
+        transform: scale(1); 
+      }
+    }
+
+    @keyframes checkPop {
+      0% { transform: translate(-50%, -50%) scale(0); }
+      50% { transform: translate(-50%, -50%) scale(1.2); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.8; }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .page { 
+        padding: 24px 16px 60px; 
+      }
+      
+      .card { 
+        padding: 24px 20px; 
+      }
+      
+      h1 { 
+        font-size: 28px; 
+      }
+
+      .subtitle {
+        font-size: 16px;
+      }
+      
+      .section-title {
+        font-size: 20px;
+      }
+
+      .level-tag { 
+        font-size: 26px; 
+      }
+
+      .dimension-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .dimension-item {
+        padding: 16px;
+      }
+
+      .dimension-score {
+        font-size: 22px;
+      }
+
+      .result-body {
+        padding: 24px 20px;
+      }
+
+      .btn-primary {
+        padding: 16px 40px;
+        font-size: 16px;
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+
+    /* Loading state */
+    .loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    
+    <div class="header-card">
+      <h1>AI 行销成熟度评估表</h1>
+      <p class="subtitle">
+        适用于小企业主、一人公司。只需 2 分钟，快速诊断您的内容、广告、AI 应用及数据化能力。
+      </p>
+    </div>
+
+    <form id="assessmentForm">
+      
+      <div class="card">
+        <div class="section-title">A. 内容生产 (Content)</div>
+        <div class="question">
+          <div class="question-title">1. 您的内容（贴文、视频、文案）主要怎么制作？</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="radio" name="q1" value="1" />
+              <span class="check-circle"></span>
+              ① 完全自己做／想到什么做什么
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q1" value="2" />
+              <span class="check-circle"></span>
+              ② 偶尔用模板，但不固定
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q1" value="3" />
+              <span class="check-circle"></span>
+              ③ 有使用 AI（ChatGPT / Canva AI）辅助制作
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q1" value="4" />
+              <span class="check-circle"></span>
+              ④ 内容有系统（主题、排程、AI 流程）
+            </label>
+          </div>
+        </div>
+        <div class="question">
+          <div class="question-title">2. 您的内容方向是否明确？</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="radio" name="q2" value="1" />
+              <span class="check-circle"></span>
+              ① 没有方向，看心情发
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q2" value="2" />
+              <span class="check-circle"></span>
+              ② 有模糊方向，但不稳定
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q2" value="3" />
+              <span class="check-circle"></span>
+              ③ 有固定主题（教育、案例、产品）
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q2" value="4" />
+              <span class="check-circle"></span>
+              ④ 有完整内容策略＋目标（吸粉 → 私域 → 成交）
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">B. 广告 (Ads)</div>
+        <div class="question">
+          <div class="question-title">3. 您目前的广告投放状况？</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="radio" name="q3" value="1" />
+              <span class="check-circle"></span>
+              ① 没投过广告
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q3" value="2" />
+              <span class="check-circle"></span>
+              ② 偶尔投，效果不稳定
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q3" value="3" />
+              <span class="check-circle"></span>
+              ③ 有固定投放（基本结构 OK）
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q3" value="4" />
+              <span class="check-circle"></span>
+              ④ 有系统化广告（A/B 测试、受众拆分、复盘）
+            </label>
+          </div>
+        </div>
+        <div class="question">
+          <div class="question-title">4. 您对广告数据（CPC / CTR / CPM / ROAS）的理解？</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="radio" name="q4" value="1" />
+              <span class="check-circle"></span>
+              ① 完全不懂
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q4" value="2" />
+              <span class="check-circle"></span>
+              ② 看得懂，但不会分析
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q4" value="3" />
+              <span class="check-circle"></span>
+              ③ 看得懂，并能大概调整广告
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q4" value="4" />
+              <span class="check-circle"></span>
+              ④ 能根据数据做策略（预算、受众、素材）
+            </label>
+          </div>
+        </div>
+        <div class="question">
+          <div class="question-title">5. 广告素材制作流程？（视频、海报）</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="radio" name="q5" value="1" />
+              <span class="check-circle"></span>
+              ① 手工随便做
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q5" value="2" />
+              <span class="check-circle"></span>
+              ② 使用模板但无法复用
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q5" value="3" />
+              <span class="check-circle"></span>
+              ③ 使用 AI（Kling / 即梦 / Lovart）提高效率
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q5" value="4" />
+              <span class="check-circle"></span>
+              ④ 固定产线：脚本 → 生成 → 剪辑 → 测试
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">C. AI 使用能力 (AI Capability)</div>
+        <div class="question">
+          <div class="question-title">6. 您目前用 AI 的程度？</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="radio" name="q6" value="1" />
+              <span class="check-circle"></span>
+              ① 没用
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q6" value="2" />
+              <span class="check-circle"></span>
+              ② 偶尔用来写文案
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q6" value="3" />
+              <span class="check-circle"></span>
+              ③ 用来做内容＋广告素材
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q6" value="4" />
+              <span class="check-circle"></span>
+              ④ 全流程 AI（文案＋图片＋视频＋分析）
+            </label>
+          </div>
+        </div>
+        <div class="question">
+          <div class="question-title">7. 您的 Prompt（提示词）能力？</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="radio" name="q7" value="1" />
+              <span class="check-circle"></span>
+              ① 完全不会写
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q7" value="2" />
+              <span class="check-circle"></span>
+              ② 只会写简单指令
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q7" value="3" />
+              <span class="check-circle"></span>
+              ③ 会写结构化 Prompt（品牌＋风格＋目的）
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q7" value="4" />
+              <span class="check-circle"></span>
+              ④ 能写完整流程 Prompt（策略＋内容＋广告拆解）
+            </label>
+          </div>
+        </div>
+        <div class="question">
+          <div class="question-title">8. 是否使用 AI 做客户画像／客户分析？</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="radio" name="q8" value="1" />
+              <span class="check-circle"></span>
+              ① 没做过
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q8" value="2" />
+              <span class="check-circle"></span>
+              ② 偶尔玩玩
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q8" value="3" />
+              <span class="check-circle"></span>
+              ③ 有让 AI 做客户画像／TA 分析
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q8" value="4" />
+              <span class="check-circle"></span>
+              ④ 有固定 AI 分析流程（客户分层／内容方向）
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">D. 自动化系统 (Automation)</div>
+        <div class="question">
+          <div class="question-title">9. 是否使用自动化工具（ManyChat／WhatsApp 自动回复）？</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="radio" name="q9" value="1" />
+              <span class="check-circle"></span>
+              ① 完全没有
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q9" value="2" />
+              <span class="check-circle"></span>
+              ② 有简单设置（欢迎语）
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q9" value="3" />
+              <span class="check-circle"></span>
+              ③ 有流程（引流 → 标签 → 回复）
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q9" value="4" />
+              <span class="check-circle"></span>
+              ④ 全自动成交流程（广告 → 私域 → 回复 → 预约 → 成交）
+            </label>
+          </div>
+        </div>
+        <div class="question">
+          <div class="question-title">10. 是否有固定行销流程？（内容 → 引流 → 留资 → 成交）</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="radio" name="q10" value="1" />
+              <span class="check-circle"></span>
+              ① 没有流程
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q10" value="2" />
+              <span class="check-circle"></span>
+              ② 有一点，但不稳定
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q10" value="3" />
+              <span class="check-circle"></span>
+              ③ 部分流程系统化
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q10" value="4" />
+              <span class="check-circle"></span>
+              ④ 完整 SOP，定期复盘优化
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">E. 数据能力 (Analytics)</div>
+        <div class="question">
+          <div class="question-title">11. 是否追踪每月行销成效？</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="radio" name="q11" value="1" />
+              <span class="check-circle"></span>
+              ① 完全没追踪
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q11" value="2" />
+              <span class="check-circle"></span>
+              ② 偶尔记一下
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q11" value="3" />
+              <span class="check-circle"></span>
+              ③ 固定记录广告＋内容数据
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q11" value="4" />
+              <span class="check-circle"></span>
+              ④ 有数据体系（报告＋复盘＋优化）
+            </label>
+          </div>
+        </div>
+        <div class="question">
+          <div class="question-title">12. 您是否知道自己最赚钱的引流／广告渠道？</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="radio" name="q12" value="1" />
+              <span class="check-circle"></span>
+              ① 不知道来源哪里
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q12" value="2" />
+              <span class="check-circle"></span>
+              ② 大概知道，但不准确
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q12" value="3" />
+              <span class="check-circle"></span>
+              ③ 可以追踪到主要来源
+            </label>
+            <label class="option-label">
+              <input type="radio" name="q12" value="4" />
+              <span class="check-circle"></span>
+              ④ 明确知道各渠道贡献并做预算调整
+            </label>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn-primary" onclick="calculateResult()">
+            <span>查看评估报告</span>
+          </button>
+          <div id="alert" class="alert" style="display: none;">
+            请先完成所有题目再提交。
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div id="resultCard" class="card result-card" style="display: none;">
+      <div class="result-header-bg">
+        <div class="score-display" id="scoreText"></div>
+        <div id="levelTag" class="level-tag"></div>
+      </div>
+      <div class="result-body">
+        <div class="advice-title">📊 五大维度得分</div>
+        <div class="dimension-grid">
+          <div class="dimension-item">
+            <div class="dimension-label">内容</div>
+            <div class="dimension-score" id="dimContent"></div>
+          </div>
+          <div class="dimension-item">
+            <div class="dimension-label">广告</div>
+            <div class="dimension-score" id="dimAds"></div>
+          </div>
+          <div class="dimension-item">
+            <div class="dimension-label">AI 应用</div>
+            <div class="dimension-score" id="dimAI"></div>
+          </div>
+          <div class="dimension-item">
+            <div class="dimension-label">自动化</div>
+            <div class="dimension-score" id="dimAutomation"></div>
+          </div>
+          <div class="dimension-item">
+            <div class="dimension-label">数据</div>
+            <div class="dimension-score" id="dimData"></div>
+          </div>
+        </div>
+        <div class="advice-title">💡 诊断分析</div>
+        <div class="diagnosis-text">
+          <p id="diagnosisText" style="margin: 0;"></p>
+        </div>
+        <div class="advice-title">🚀 建议优先级（从先到后）</div>
+        <ul class="advice-list" id="priorityList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========== Google Sheets 配置 ==========
+    // 请将下面的 URL 替换为您从 Google Apps Script 获取的 Web App URL
+    // 详细设置步骤请参考 SETUP_GOOGLE_SHEETS.md 文件
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzxr_KyjhbdBv1qEncsE_3rspPN_zrlhH9f98GbyBE5eOc9jwG2ZU_VaEZA5d8SsoTq/exec';
+    
+    // 如果不想使用 Google Sheets，将下面的变量设为 false
+    const ENABLE_GOOGLE_SHEETS = true;
+
+    // ========== 表单逻辑 ==========
+    function getScoreForQuestion(name) {
+      const selected = document.querySelector(
+        'input[name="' + name + '"]:checked'
+      );
+      return selected ? parseInt(selected.value, 10) : null;
+    }
+
+    function getAnswerText(questionName) {
+      const selected = document.querySelector(
+        'input[name="' + questionName + '"]:checked'
+      );
+      if (!selected) return null;
+      
+      const label = selected.closest('label');
+      if (label) {
+        return label.textContent.trim().replace(/^[①②③④]\s*/, '');
+      }
+      return selected.value;
+    }
+
+    async function submitToGoogleSheets(data) {
+      if (!ENABLE_GOOGLE_SHEETS || !GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('YOUR_GOOGLE')) {
+        console.log('Google Sheets 未配置，跳过数据提交');
+        return { success: false, message: 'Google Sheets 未配置' };
+      }
+
+      // 调试：打印要提交的数据
+      console.log('========== 准备提交数据 ==========');
+      console.log('完整数据:', data);
+      console.log('总得分:', data.totalScore, '(类型:', typeof data.totalScore, ')');
+      console.log('时间戳:', data.timestamp);
+
+      try {
+        const jsonData = JSON.stringify(data);
+        console.log('JSON 数据长度:', jsonData.length, '字符');
+        
+        // 方法1: 使用表单提交（最可靠的方式）
+        const formData = new URLSearchParams();
+        formData.append('data', jsonData);
+        
+        console.log('尝试方法1: 表单 POST 提交...');
+        const formResponse = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formData.toString()
+        }).catch(err => {
+          console.log('方法1 错误 (可能是 CORS 限制，但请求可能已发送):', err);
+          return null;
+        });
+
+        // 方法2: 使用 JSON POST
+        console.log('尝试方法2: JSON POST 提交...');
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonData
+        }).catch(err => {
+          console.log('方法2 错误:', err);
+        });
+
+        // 方法3: 使用 GET（备用，仅当数据不太大时）
+        if (jsonData.length < 2000) {
+          console.log('尝试方法3: GET 提交...');
+          const getUrl = GOOGLE_SCRIPT_URL + '?data=' + encodeURIComponent(jsonData);
+          await fetch(getUrl, {
+            method: 'GET',
+            mode: 'no-cors'
+          }).catch(err => {
+            console.log('方法3 错误:', err);
+          });
+        } else {
+          console.log('方法3 跳过：数据太大 (' + jsonData.length + ' 字符)');
+        }
+
+        console.log('========== 提交完成 ==========');
+        console.log('✓ 所有提交方法已尝试');
+        console.log('  - 总得分:', data.totalScore);
+        console.log('  - 等级:', data.levelText);
+        console.log('  - 等级数值:', data.level);
+        console.log('  - 时间:', data.timestamp);
+        console.log('请检查 Google Sheets 是否收到数据');
+
+        return { success: true };
+      } catch (error) {
+        console.error('========== 提交出错 ==========');
+        console.error('错误详情:', error);
+        console.error('错误消息:', error.message);
+        console.error('错误堆栈:', error.stack);
+        return { success: false, error: error.message };
+      }
+    }
+
+    function calculateResult() {
+      const alertEl = document.getElementById("alert");
+      alertEl.style.display = "none";
+      const answers = [];
+
+      for (let i = 1; i <= 12; i++) {
+        const score = getScoreForQuestion("q" + i);
+        if (score === null) {
+          alertEl.style.display = "inline-block";
+          return;
+        }
+        answers.push(score);
+      }
+
+      // 总分
+      const totalScore = answers.reduce((a, b) => a + b, 0); // 12 ~ 48
+      const maxScore = 48;
+
+      // 各维度
+      const dimContent = answers[0] + answers[1]; // q1-2
+      const dimAds = answers[2] + answers[3] + answers[4]; // q3-5
+      const dimAI = answers[5] + answers[6] + answers[7]; // q6-8
+      const dimAutomation = answers[8] + answers[9]; // q9-10
+      const dimData = answers[10] + answers[11]; // q11-12
+
+      // 等级
+      let level = 1;
+      let levelText = "Level 1 · 初始阶段";
+      let levelDesc =
+        "目前整体还在起步阶段，行销动作比较随性，AI 与系统化还很少使用。";
+      
+      if (totalScore >= 13 && totalScore <= 24) {
+        level = 2;
+        levelText = "Level 2 · 入门阶段";
+        levelDesc =
+          "已经开始尝试内容、广告或 AI 工具，但还比较零散、不稳定，可以通过建立基础流程快速升级。";
+      }
+
+      if (totalScore >= 25 && totalScore <= 36) {
+        level = 3;
+        levelText = "Level 3 · 成熟阶段";
+        levelDesc =
+          "已经有一定的系统与经验，接下来可以用 AI 和自动化把效率拉高、把数据用起来。";
+      }
+
+      if (totalScore >= 37) {
+        level = 4;
+        levelText = "Level 4 · 高度成熟";
+        levelDesc =
+          "已经具备相当完整的 AI 行销系统，可以进一步做深度数据分析与规模化复制。";
+      }
+
+      document.getElementById(
+        "scoreText"
+      ).textContent = `总得分：${totalScore} / ${maxScore}`;
+      const levelTag = document.getElementById("levelTag");
+      levelTag.textContent = levelText;
+
+      document.getElementById(
+        "dimContent"
+      ).textContent = `${dimContent} / 8`;
+      document.getElementById("dimAds").textContent = `${dimAds} / 12`;
+      document.getElementById("dimAI").textContent = `${dimAI} / 12`;
+      document.getElementById(
+        "dimAutomation"
+      ).textContent = `${dimAutomation} / 8`;
+      document.getElementById("dimData").textContent = `${dimData} / 8`;
+
+      document.getElementById("diagnosisText").textContent = levelDesc;
+
+      const priorities = [];
+
+      // 找出最低的维度，给简单优先级建议
+      const dimMap = [
+        { key: "内容", score: dimContent, max: 8 },
+        { key: "广告", score: dimAds, max: 12 },
+        { key: "AI 使用", score: dimAI, max: 12 },
+        { key: "自动化", score: dimAutomation, max: 8 },
+        { key: "数据能力", score: dimData, max: 8 }
+      ];
+
+      dimMap.sort(
+        (a, b) => a.score / a.max - b.score / b.max
+      );
+
+      dimMap.forEach((d) => {
+        let suggestion = "";
+        if (d.key === "内容") {
+          suggestion =
+            "建立固定内容方向（教育、案例、产品），开始用 AI 帮你写脚本和标题，减少靠感觉发内容。";
+        } else if (d.key === "广告") {
+          suggestion =
+            "从一个平台开始（例如 Facebook Ads），学会基本数据看法，先跑小预算做 A/B 测试。";
+        } else if (d.key === "AI 使用") {
+          suggestion =
+            "固定使用 1–2 个 AI 工具（ChatGPT + Canva），练习写 Prompt，让 AI 变成你的行销助手。";
+        } else if (d.key === "自动化") {
+          suggestion =
+            "先从简单自动回复开始，例如 ManyChat / WhatsApp 欢迎语，再慢慢加上标签与跟进流程。";
+        } else if (d.key === "数据能力") {
+          suggestion =
+            "每个月做一次简单复盘：本月内容、广告、咨询来源分别是多少，记录在一份表格就好。";
+        }
+        priorities.push(`${d.key} 优先优化：${suggestion}`);
+      });
+
+      const priorityList = document.getElementById("priorityList");
+      priorityList.innerHTML = "";
+      priorities.forEach((p) => {
+        const li = document.createElement("li");
+        li.textContent = p;
+        priorityList.appendChild(li);
+      });
+
+      const resultCard = document.getElementById("resultCard");
+      resultCard.style.display = "block";
+      
+      // 准备提交到 Google Sheets 的数据
+      const submissionData = {
+        timestamp: new Date().toISOString(),
+        totalScore: totalScore,
+        maxScore: maxScore,
+        level: level,
+        levelText: levelText,
+        dimensions: {
+          content: { score: dimContent, max: 8 },
+          ads: { score: dimAds, max: 12 },
+          ai: { score: dimAI, max: 12 },
+          automation: { score: dimAutomation, max: 8 },
+          data: { score: dimData, max: 8 }
+        },
+        answers: answers.map((score, index) => ({
+          question: `Q${index + 1}`,
+          score: score,
+          answerText: getAnswerText(`q${index + 1}`)
+        })),
+        diagnosis: levelDesc,
+        priorities: priorities
+      };
+
+      // 提交到 Google Sheets（异步，不影响页面显示）
+      if (ENABLE_GOOGLE_SHEETS) {
+        submitToGoogleSheets(submissionData).then(result => {
+          if (result.success) {
+            console.log('✓ 数据已成功提交到 Google Sheets');
+          } else {
+            console.warn('⚠ 数据提交到 Google Sheets 时出现问题，但评估结果已显示');
+          }
+        });
+      }
+      
+      // 滚动到结果区
+      setTimeout(() => {
+        resultCard.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    }
+  </script>
+</body>
+</html>
