@@ -14,8 +14,15 @@ const SHEET_NAME = 'Sheet1';
 function processData(data) {
   try {
     Logger.log('========== 开始处理数据 ==========');
-    Logger.log('收到数据对象: ' + JSON.stringify(data));
-    Logger.log('总得分原始值: ' + data.totalScore + ' (类型: ' + typeof data.totalScore + ')');
+    
+    // 验证数据对象
+    if (!data || typeof data !== 'object') {
+      throw new Error('数据对象无效: ' + typeof data);
+    }
+    
+    Logger.log('收到数据对象类型: ' + typeof data);
+    Logger.log('数据 keys: ' + Object.keys(data).join(', '));
+    Logger.log('总得分原始值: ' + (data.totalScore || '未定义') + ' (类型: ' + typeof data.totalScore + ')');
     
     // 打开指定的 Google Sheets
     if (!SPREADSHEET_ID || SPREADSHEET_ID === 'YOUR_SPREADSHEET_ID_HERE') {
@@ -111,45 +118,80 @@ function doPost(e) {
     Logger.log('parameter keys: ' + (e.parameter ? Object.keys(e.parameter).join(', ') : 'null'));
     
     let data;
+    let rawData = null;
     
     // 方法1: 表单数据 (application/x-www-form-urlencoded)
+    // no-cors 模式下，数据可能在 parameter.data 中
     if (e.parameter && e.parameter.data) {
       Logger.log('方法1: 从 parameter.data 解析数据');
+      Logger.log('parameter.data 内容: ' + e.parameter.data.substring(0, 200) + '...');
       try {
+        rawData = e.parameter.data;
         data = JSON.parse(e.parameter.data);
-        Logger.log('成功解析 parameter.data');
+        Logger.log('✓ 成功解析 parameter.data');
+        Logger.log('解析后的数据 keys: ' + Object.keys(data).join(', '));
       } catch (err) {
-        Logger.log('解析 parameter.data 失败: ' + err.toString());
+        Logger.log('✗ 解析 parameter.data 失败: ' + err.toString());
+        Logger.log('原始数据: ' + e.parameter.data);
       }
     }
     
     // 方法2: JSON 格式 (application/json)
+    // 标准 POST 请求，数据在 postData.contents 中
     if (!data && e.postData && e.postData.contents) {
       Logger.log('方法2: 从 postData.contents 解析 JSON');
+      Logger.log('postData.contents 长度: ' + e.postData.contents.length);
       try {
+        rawData = e.postData.contents;
         data = JSON.parse(e.postData.contents);
-        Logger.log('成功解析 postData.contents');
+        Logger.log('✓ 成功解析 postData.contents');
+        Logger.log('解析后的数据 keys: ' + Object.keys(data).join(', '));
       } catch (err) {
-        Logger.log('解析 postData.contents 失败: ' + err.toString());
+        Logger.log('✗ 解析 postData.contents 失败: ' + err.toString());
       }
     }
     
-    // 方法3: 直接使用 parameter (fallback)
+    // 方法3: 尝试从 parameter 中直接获取（某些情况下数据可能在其他字段）
     if (!data && e.parameter) {
-      Logger.log('方法3: 尝试直接使用 parameter');
-      // 如果 parameter 中有 data 字段但解析失败，尝试其他方式
-      if (Object.keys(e.parameter).length > 0) {
-        Logger.log('parameter 内容: ' + JSON.stringify(e.parameter));
+      Logger.log('方法3: 检查 parameter 中的其他字段');
+      Logger.log('所有 parameter keys: ' + Object.keys(e.parameter).join(', '));
+      
+      // 尝试查找包含 JSON 的字段
+      for (var key in e.parameter) {
+        if (key !== 'data' && typeof e.parameter[key] === 'string' && e.parameter[key].startsWith('{')) {
+          Logger.log('在 parameter.' + key + ' 中找到可能的 JSON 数据');
+          try {
+            data = JSON.parse(e.parameter[key]);
+            Logger.log('✓ 成功从 parameter.' + key + ' 解析数据');
+            break;
+          } catch (err) {
+            Logger.log('✗ 解析 parameter.' + key + ' 失败');
+          }
+        }
       }
     }
     
+    // 如果还是没有数据，记录详细信息用于调试
     if (!data) {
-      Logger.log('错误: 无法解析数据');
+      Logger.log('========== 无法解析数据 ==========');
+      Logger.log('hasPostData: ' + !!e.postData);
+      Logger.log('postDataType: ' + (e.postData ? e.postData.type : 'null'));
+      Logger.log('hasParameter: ' + !!e.parameter);
+      if (e.parameter) {
+        Logger.log('parameter keys: ' + Object.keys(e.parameter).join(', '));
+        for (var key in e.parameter) {
+          Logger.log('parameter.' + key + ' (前100字符): ' + String(e.parameter[key]).substring(0, 100));
+        }
+      }
+      if (e.postData && e.postData.contents) {
+        Logger.log('postData.contents (前200字符): ' + e.postData.contents.substring(0, 200));
+      }
+      
       return ContentService
         .createTextOutput(JSON.stringify({ 
           success: false, 
           error: '无法解析请求数据',
-          received: {
+          debug: {
             hasPostData: !!e.postData,
             postDataType: e.postData ? e.postData.type : null,
             hasParameter: !!e.parameter,
@@ -159,7 +201,31 @@ function doPost(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
     
-    Logger.log('解析成功，总得分: ' + data.totalScore);
+    // 验证数据是否有效
+    if (!data || typeof data !== 'object') {
+      Logger.log('错误: 数据格式无效');
+      Logger.log('数据类型: ' + typeof data);
+      Logger.log('数据内容: ' + JSON.stringify(data));
+      return ContentService
+        .createTextOutput(JSON.stringify({ 
+          success: false, 
+          error: '数据格式无效',
+          receivedData: data
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    // 检查必要字段
+    if (data.totalScore === undefined) {
+      Logger.log('警告: totalScore 未定义');
+      Logger.log('数据 keys: ' + Object.keys(data).join(', '));
+      Logger.log('完整数据: ' + JSON.stringify(data));
+    }
+    
+    Logger.log('解析成功，准备处理数据');
+    Logger.log('总得分: ' + (data.totalScore || '未定义'));
+    Logger.log('姓名: ' + (data.userName || '未定义'));
+    
     const result = processData(data);
     
     // 返回成功响应
@@ -174,7 +240,8 @@ function doPost(e) {
   } catch (error) {
     // 记录错误
     Logger.log('========== doPost 错误 ==========');
-    Logger.log('错误: ' + error.toString());
+    Logger.log('错误类型: ' + error.name);
+    Logger.log('错误消息: ' + error.message);
     Logger.log('错误堆栈: ' + error.stack);
     
     // 返回错误响应
@@ -183,7 +250,8 @@ function doPost(e) {
         success: false, 
         error: error.toString(),
         message: '保存数据时出错，请检查配置',
-        stack: error.stack
+        errorName: error.name,
+        errorMessage: error.message
       }))
       .setMimeType(ContentService.MimeType.JSON);
   }
