@@ -166,6 +166,44 @@
       line-height: 1.5;
     }
 
+    /* Input Fields */
+    .input-group {
+      margin-bottom: 24px;
+    }
+
+    .input-label {
+      display: block;
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text-main);
+      background-color: #fff;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-sizing: border-box;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary);
+      background-color: #f8fafc;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .input-field::placeholder {
+      color: var(--text-sub);
+      opacity: 0.6;
+    }
+
     /* Custom Radio Options */
     .options-grid {
       display: flex;
@@ -210,8 +248,9 @@
       box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
     }
 
-    /* Hide default radio */
-    .option-label input[type="radio"] {
+    /* Hide default radio and checkbox */
+    .option-label input[type="radio"],
+    .option-label input[type="checkbox"] {
       position: absolute;
       opacity: 0;
       cursor: pointer;
@@ -262,6 +301,23 @@
       background: white;
       border-radius: 50%;
       animation: checkPop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Checkbox specific styles */
+    .option-label input[type="checkbox"] + .check-circle {
+      border-radius: 6px;
+    }
+
+    .option-label:has(input[type="checkbox"]:checked) .check-circle::after {
+      content: '✓';
+      width: auto;
+      height: auto;
+      background: transparent;
+      border-radius: 0;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      line-height: 1;
     }
 
     /* Buttons */
@@ -640,6 +696,20 @@
     <form id="assessmentForm">
       
       <div class="card">
+        <div class="section-title">基本信息</div>
+        <div class="question">
+          <div class="input-group">
+            <label class="input-label">您的名字</label>
+            <input type="text" name="userName" class="input-field" placeholder="请输入您的名字" required />
+          </div>
+          <div class="input-group">
+            <label class="input-label">您的行业</label>
+            <input type="text" name="userIndustry" class="input-field" placeholder="例如：电商、餐饮、教育、咨询等" required />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="section-title">A. 内容生产 (Content)</div>
         <div class="question">
           <div class="question-title">1. 您的内容（贴文、视频、文案）主要怎么制作？</div>
@@ -957,6 +1027,59 @@
             </label>
           </div>
         </div>
+        <div class="question">
+          <div class="question-title">13. 你最希望学习以下哪三个 AI 技能？（最多选择三个）</div>
+          <div class="options-grid">
+            <label class="option-label">
+              <input type="checkbox" name="q13" value="AI 数字人制作" />
+              <span class="check-circle"></span>
+              AI 数字人制作
+            </label>
+            <label class="option-label">
+              <input type="checkbox" name="q13" value="AI 视频生成" />
+              <span class="check-circle"></span>
+              AI 视频生成
+            </label>
+            <label class="option-label">
+              <input type="checkbox" name="q13" value="AI 图片生成" />
+              <span class="check-circle"></span>
+              AI 图片生成
+            </label>
+            <label class="option-label">
+              <input type="checkbox" name="q13" value="AI 文案写作" />
+              <span class="check-circle"></span>
+              AI 文案写作
+            </label>
+            <label class="option-label">
+              <input type="checkbox" name="q13" value="AI 自动化回复" />
+              <span class="check-circle"></span>
+              AI 自动化回复
+            </label>
+            <label class="option-label">
+              <input type="checkbox" name="q13" value="AI 网站制作" />
+              <span class="check-circle"></span>
+              AI 网站制作
+            </label>
+            <label class="option-label">
+              <input type="checkbox" name="q13" value="AI 广告素材制作" />
+              <span class="check-circle"></span>
+              AI 广告素材制作
+            </label>
+            <label class="option-label">
+              <input type="checkbox" name="q13" value="AI 市场调查" />
+              <span class="check-circle"></span>
+              AI 市场调查
+            </label>
+            <label class="option-label">
+              <input type="checkbox" name="q13" value="AI 社群内容系统" />
+              <span class="check-circle"></span>
+              AI 社群内容系统
+            </label>
+          </div>
+          <div id="q13-alert" class="alert" style="display: none; margin-top: 12px;">
+            最多只能选择三个选项。
+          </div>
+        </div>
         <div class="actions">
           <button type="button" class="btn-primary" onclick="calculateResult()">
             <span>查看评估报告</span>
@@ -966,6 +1089,7 @@
           </div>
         </div>
       </div>
+      
     </form>
 
     <div id="resultCard" class="card result-card" style="display: none;">
@@ -1017,6 +1141,33 @@
     const ENABLE_GOOGLE_SHEETS = true;
 
     // ========== 表单逻辑 ==========
+    // 限制问题13最多选择3个
+    document.addEventListener('DOMContentLoaded', function() {
+      const q13Checkboxes = document.querySelectorAll('input[name="q13"]');
+      const q13Alert = document.getElementById('q13-alert');
+      
+      if (q13Checkboxes.length > 0) {
+        q13Checkboxes.forEach(function(checkbox) {
+          checkbox.addEventListener('change', function() {
+            const checked = document.querySelectorAll('input[name="q13"]:checked');
+            if (checked.length > 3) {
+              this.checked = false;
+              if (q13Alert) {
+                q13Alert.style.display = 'inline-block';
+                setTimeout(function() {
+                  q13Alert.style.display = 'none';
+                }, 3000);
+              }
+            } else {
+              if (q13Alert) {
+                q13Alert.style.display = 'none';
+              }
+            }
+          });
+        });
+      }
+    });
+
     function getScoreForQuestion(name) {
       const selected = document.querySelector(
         'input[name="' + name + '"]:checked'
@@ -1037,6 +1188,17 @@
       return selected.value;
     }
 
+    function getCheckboxAnswers(questionName) {
+      const checked = document.querySelectorAll(
+        'input[name="' + questionName + '"]:checked'
+      );
+      if (checked.length === 0) return [];
+      
+      return Array.from(checked).map(function(checkbox) {
+        return checkbox.value;
+      });
+    }
+
     async function submitToGoogleSheets(data) {
       if (!ENABLE_GOOGLE_SHEETS || !GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('YOUR_GOOGLE')) {
         console.log('Google Sheets 未配置，跳过数据提交');
@@ -1046,66 +1208,134 @@
       // 调试：打印要提交的数据
       console.log('========== 准备提交数据 ==========');
       console.log('完整数据:', data);
+      console.log('姓名:', data.userName || '(未填写)');
+      console.log('行业:', data.userIndustry || '(未填写)');
+      console.log('最想学习的AI技能:', data.q13Skills || '(未选择)');
       console.log('总得分:', data.totalScore, '(类型:', typeof data.totalScore, ')');
+      console.log('等级:', data.level);
       console.log('时间戳:', data.timestamp);
 
       try {
         const jsonData = JSON.stringify(data);
         console.log('JSON 数据长度:', jsonData.length, '字符');
+        console.log('Google Script URL:', GOOGLE_SCRIPT_URL);
         
-        // 方法1: 使用表单提交（最可靠的方式）
+        // 优先使用方法1: 表单提交（可以接收响应）
         const formData = new URLSearchParams();
         formData.append('data', jsonData);
         
-        console.log('尝试方法1: 表单 POST 提交...');
-        const formResponse = await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: formData.toString()
-        }).catch(err => {
-          console.log('方法1 错误 (可能是 CORS 限制，但请求可能已发送):', err);
-          return null;
-        });
-
-        // 方法2: 使用 JSON POST
-        console.log('尝试方法2: JSON POST 提交...');
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonData
-        }).catch(err => {
-          console.log('方法2 错误:', err);
-        });
-
-        // 方法3: 使用 GET（备用，仅当数据不太大时）
-        if (jsonData.length < 2000) {
-          console.log('尝试方法3: GET 提交...');
-          const getUrl = GOOGLE_SCRIPT_URL + '?data=' + encodeURIComponent(jsonData);
-          await fetch(getUrl, {
-            method: 'GET',
-            mode: 'no-cors'
-          }).catch(err => {
-            console.log('方法3 错误:', err);
+        console.log('尝试方法1: 表单 POST 提交（带响应）...');
+        try {
+          const formResponse = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'cors',  // 改为 cors 以便接收响应
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formData.toString()
           });
-        } else {
-          console.log('方法3 跳过：数据太大 (' + jsonData.length + ' 字符)');
+          
+          if (formResponse.ok) {
+            const result = await formResponse.json();
+            console.log('✓ 方法1 成功:', result);
+            if (result.success) {
+              console.log('========== 数据已成功提交到 Google Sheets ==========');
+              return { success: true, result: result };
+            } else {
+              console.warn('⚠ 方法1 返回失败:', result);
+            }
+          } else {
+            console.warn('⚠ 方法1 HTTP 错误:', formResponse.status, formResponse.statusText);
+          }
+        } catch (err) {
+          console.log('方法1 CORS 错误，尝试备用方法:', err.message);
         }
 
-        console.log('========== 提交完成 ==========');
-        console.log('✓ 所有提交方法已尝试');
+        // 方法2: 使用 JSON POST（带响应）
+        console.log('尝试方法2: JSON POST 提交（带响应）...');
+        try {
+          const jsonResponse = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: jsonData
+          });
+          
+          if (jsonResponse.ok) {
+            const result = await jsonResponse.json();
+            console.log('✓ 方法2 成功:', result);
+            if (result.success) {
+              console.log('========== 数据已成功提交到 Google Sheets ==========');
+              return { success: true, result: result };
+            } else {
+              console.warn('⚠ 方法2 返回失败:', result);
+            }
+          } else {
+            console.warn('⚠ 方法2 HTTP 错误:', jsonResponse.status, jsonResponse.statusText);
+          }
+        } catch (err) {
+          console.log('方法2 CORS 错误:', err.message);
+        }
+
+        // 方法3: 使用 no-cors（无法接收响应，但可能成功）
+        console.log('尝试方法3: no-cors POST（无法接收响应）...');
+        try {
+          await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formData.toString()
+          });
+          console.log('方法3 请求已发送（无法确认是否成功）');
+        } catch (err) {
+          console.log('方法3 错误:', err);
+        }
+
+        // 方法4: 使用 GET（备用，仅当数据不太大时）
+        if (jsonData.length < 1500) {
+          console.log('尝试方法4: GET 提交...');
+          try {
+            const getUrl = GOOGLE_SCRIPT_URL + '?data=' + encodeURIComponent(jsonData);
+            const getResponse = await fetch(getUrl, {
+              method: 'GET',
+              mode: 'cors'
+            });
+            
+            if (getResponse.ok) {
+              const result = await getResponse.json();
+              console.log('✓ 方法4 成功:', result);
+              if (result.success) {
+                console.log('========== 数据已成功提交到 Google Sheets ==========');
+                return { success: true, result: result };
+              }
+            }
+          } catch (err) {
+            console.log('方法4 错误:', err);
+          }
+        } else {
+          console.log('方法4 跳过：数据太大 (' + jsonData.length + ' 字符)');
+        }
+
+        console.log('========== 所有提交方法已尝试 ==========');
+        console.log('  - 姓名:', data.userName || '(未填写)');
+        console.log('  - 行业:', data.userIndustry || '(未填写)');
+        console.log('  - 最想学习的AI技能:', data.q13Skills || '(未选择)');
         console.log('  - 总得分:', data.totalScore);
         console.log('  - 等级:', data.levelText);
         console.log('  - 等级数值:', data.level);
         console.log('  - 时间:', data.timestamp);
-        console.log('请检查 Google Sheets 是否收到数据');
+        console.log('');
+        console.log('⚠ 注意：如果使用 no-cors 模式，无法确认数据是否成功提交');
+        console.log('请检查：');
+        console.log('1. Google Apps Script 是否正确配置');
+        console.log('2. Web App 是否已部署并设置为"任何人"可访问');
+        console.log('3. Google Sheets 是否收到数据');
 
-        return { success: true };
+        return { success: true, note: '请求已发送，但无法确认是否成功（可能使用了 no-cors 模式）' };
       } catch (error) {
         console.error('========== 提交出错 ==========');
         console.error('错误详情:', error);
@@ -1118,15 +1348,37 @@
     function calculateResult() {
       const alertEl = document.getElementById("alert");
       alertEl.style.display = "none";
+      
+      // 验证基本信息
+      const userName = document.querySelector('input[name="userName"]').value.trim();
+      const userIndustry = document.querySelector('input[name="userIndustry"]').value.trim();
+      
+      if (!userName || !userIndustry) {
+        alertEl.textContent = "请先填写您的名字和行业。";
+        alertEl.style.display = "inline-block";
+        return;
+      }
+      
       const answers = [];
 
       for (let i = 1; i <= 12; i++) {
         const score = getScoreForQuestion("q" + i);
         if (score === null) {
+          alertEl.textContent = "请先完成所有题目再提交。";
           alertEl.style.display = "inline-block";
           return;
         }
         answers.push(score);
+      }
+
+      // 验证问题13（可选，但如果选择了，最多3个）
+      const q13Answers = getCheckboxAnswers("q13");
+      if (q13Answers.length > 3) {
+        const q13Alert = document.getElementById("q13-alert");
+        if (q13Alert) {
+          q13Alert.style.display = "inline-block";
+        }
+        return;
       }
 
       // 总分
@@ -1233,8 +1485,14 @@
       resultCard.style.display = "block";
       
       // 准备提交到 Google Sheets 的数据
+      // 将 q13Skills 数组转换为逗号分隔的字符串
+      const q13SkillsText = q13Answers.length > 0 ? q13Answers.join('、') : '';
+      
       const submissionData = {
         timestamp: new Date().toISOString(),
+        userName: userName || '',
+        userIndustry: userIndustry || '',
+        q13Skills: q13SkillsText, // 转换为字符串格式
         totalScore: totalScore,
         maxScore: maxScore,
         level: level,
@@ -1254,6 +1512,15 @@
         diagnosis: levelDesc,
         priorities: priorities
       };
+      
+      // 调试：打印关键数据
+      console.log('========== 提交数据详情 ==========');
+      console.log('姓名:', submissionData.userName);
+      console.log('行业:', submissionData.userIndustry);
+      console.log('最想学习的AI技能:', submissionData.q13Skills);
+      console.log('总分:', submissionData.totalScore);
+      console.log('等级:', submissionData.level);
+      console.log('====================================');
 
       // 提交到 Google Sheets（异步，不影响页面显示）
       if (ENABLE_GOOGLE_SHEETS) {

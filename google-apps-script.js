@@ -37,10 +37,14 @@ function processData(data) {
     Logger.log('总得分 (数字): ' + totalScore);
     
     // 准备要写入的数据行
+    // 根据 Google Sheets 列顺序：时间、姓名、行业、最希望学习的AI技能、# 总分、等级
     const row = [
       data.timestamp || new Date().toLocaleString('zh-TW'),
-      totalScore,  // 确保是数字
-      Number(data.level) || 0,
+      data.userName || '',  // 姓名
+      data.userIndustry || '',  // 行业
+      data.q13Skills || '',  // 最希望学习的AI技能（已经是字符串格式）
+      totalScore,  // # 总分 - 确保是数字
+      Number(data.level) || 0,  // 等级
       data.levelText || '',
       Number(data.dimensions?.content?.score) || 0,
       Number(data.dimensions?.ads?.score) || 0,
@@ -73,8 +77,15 @@ function processData(data) {
     
     // 验证写入的数据
     const lastRow = sheet.getLastRow();
-    const savedTotalScore = sheet.getRange(lastRow, 2).getValue(); // B列是总分
-    Logger.log('验证: 最后一行 = ' + lastRow + ', B列值 = ' + savedTotalScore);
+    const savedTotalScore = sheet.getRange(lastRow, 5).getValue(); // E列是总分（第5列）
+    const savedUserName = sheet.getRange(lastRow, 2).getValue(); // B列是姓名
+    const savedIndustry = sheet.getRange(lastRow, 3).getValue(); // C列是行业
+    const savedSkills = sheet.getRange(lastRow, 4).getValue(); // D列是最想学习的AI技能
+    Logger.log('验证: 最后一行 = ' + lastRow);
+    Logger.log('  - 姓名: ' + savedUserName);
+    Logger.log('  - 行业: ' + savedIndustry);
+    Logger.log('  - 最想学习的AI技能: ' + savedSkills);
+    Logger.log('  - 总分 (E列): ' + savedTotalScore);
     
     if (Number(savedTotalScore) !== totalScore) {
       Logger.log('警告: 保存的总分 (' + savedTotalScore + ') 与期望值 (' + totalScore + ') 不一致');
@@ -222,6 +233,9 @@ function doGet(e) {
 function test() {
   const testData = {
     timestamp: new Date().toISOString(),
+    userName: '测试用户',
+    userIndustry: '测试行业',
+    q13Skills: 'AI 文案写作、AI 图片生成、AI 视频生成',
     totalScore: 24,
     maxScore: 48,
     level: 2,
@@ -272,8 +286,11 @@ function setupHeaders() {
   const sheet = ss.getSheetByName(SHEET_NAME) || ss.getActiveSheet();
   
   const headers = [
-    '时间戳',
-    '总分',
+    '时间',
+    '姓名',
+    '行业',
+    '最希望学习的AI技能',
+    '# 总分',
     '等级',
     '等级文本',
     '内容得分',
